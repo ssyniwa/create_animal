@@ -4,14 +4,24 @@ import streamlit as st
 # ページの基本設定
 st.set_page_config(page_title="惑星進化シミュレーター", page_icon="🧬", layout="centered")
 
-# --- 定数データ ---
-APPEARANCES = ["硬質外骨格", "発光器官", "翼膜", "触手","結晶の棘"]
-ATTRIBUTES = ["炎熱", "極寒", "電撃", "猛毒", "光子", "暗黒"]
+# --- 定数データ（画像マッピングを追加） ---
+# 見た目に対応する画像パス（ローカルファイルまたはURL）
+APPEARANCE_IMAGES = {
+    "硬質外骨格": "https://picsum.photos/seed/exoskeleton/200/200",
+    "発光器官": "https://picsum.photos/seed/glowing/200/200",
+    "翼膜": "https://picsum.photos/seed/wings/200/200",
+    "触手": "https://picsum.photos/seed/tentacles/200/200",
+    "結晶の棘": "https://picsum.photos/seed/crystals/200/200",
+    "名もなき不定形": "https://picsum.photos/seed/blob/200/200"
+}
 
 BOSS_LIST = [
-    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40},
-    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50},
+    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "https://picsum.photos/seed/gigadragon/300/300"},
+    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "image": "https://picsum.photos/seed/void/300/300"},
 ]
+
+APPEARANCES = list(APPEARANCE_IMAGES.keys())[1:] # "名もなき不定形"を除外
+ATTRIBUTES = ["炎熱", "極寒", "電撃", "猛毒", "光子", "暗黒"]
 
 # --- セッション状態の初期化 ---
 if "phase" not in st.session_state:
@@ -41,9 +51,9 @@ def generate_planet():
     st.session_state.planet_env = random.choice(environments)
 
 def generate_rival():
-    # ライバルのステータス生成
+    app_name = random.choice(APPEARANCES)
     st.session_state.current_rival = {
-        "appearance": random.choice(APPEARANCES),
+        "appearance": app_name,
         "attribute": random.choice(ATTRIBUTES),
         "hp": random.randint(50, 150),
         "atk": random.randint(15, 40),
@@ -51,6 +61,7 @@ def generate_rival():
         "spd": random.randint(10, 30),
         "recovery": random.randint(2, 10),
         "evasion": random.randint(5, 20),
+        "image": APPEARANCE_IMAGES.get(app_name, "https://picsum.photos/seed/default/200/200")
     }
 
 def reset_game():
@@ -85,31 +96,26 @@ elif st.session_state.phase == "exploring":
     st.subheader(f"🌐 第 {st.session_state.cycle} / 10 惑星探索")
     st.write(f"現在の環境: **{st.session_state.planet_env}惑星**")
     
-    # 現在のステータス表示
-    with st.expander("🧪 現在のあなたの生物ステータス", expanded=True):
-        st.write(f"**見た目:** {', '.join(st.session_state.player['appearances'])}")
+    # 2カラムで「プレイヤー」と「ライバル」の見た目とステータスを左右に表示
+    col_player, col_rival = st.columns(2)
+
+    with col_player:
+        st.markdown("### 🧪 あなたの生物")
+        # 現在持っている最後の見た目の画像を表示（複数ある場合は最新のものを代表表示）
+        latest_appearance = st.session_state.player['appearances'][-1]
+        player_img = APPEARANCE_IMAGES.get(latest_appearance, "https://picsum.photos/seed/blob/200/200")
+        st.image(player_img, width=150, caption=f"見た目: {', '.join(st.session_state.player['appearances'])}")
         st.write(f"**属性:** {', '.join(st.session_state.player['attributes'])}")
-        cols = st.columns(6)
-        cols[0].metric("HP", st.session_state.player["hp"])
-        cols[1].metric("ATK", st.session_state.player["atk"])
-        cols[2].metric("DEF", st.session_state.player["def"])
-        cols[3].metric("SPD", st.session_state.player["spd"])
-        cols[4].metric("回復", st.session_state.player["recovery"])
-        cols[5].metric("回避", f"{st.session_state.player['evasion']}%")
+        st.write(f"HP: {st.session_state.player['hp']} | ATK: {st.session_state.player['atk']} | DEF: {st.session_state.player['def']}")
+
+    with col_rival:
+        st.markdown("### 👾 惑星の支配的生物")
+        rival = st.session_state.current_rival
+        st.image(rival["image"], width=150, caption=f"見た目: {rival['appearance']}")
+        st.write(f"**属性:** {rival['attribute']}")
+        st.write(f"HP: {rival['hp']} | ATK: {rival['atk']} | DEF: {rival['def']}")
 
     st.markdown("---")
-    st.write("### 👾 遭遇した惑星の支配的生物")
-    rival = st.session_state.current_rival
-    st.write(f"- **見た目:** {rival['appearance']}")
-    st.write(f"- **属性:** {rival['attribute']}")
-    r_cols = st.columns(6)
-    r_cols[0].metric("HP", rival["hp"])
-    r_cols[1].metric("ATK", rival["atk"])
-    r_cols[2].metric("DEF", rival["def"])
-    r_cols[3].metric("SPD", rival["spd"])
-    r_cols[4].metric("回復", rival["recovery"])
-    r_cols[5].metric("回避", f"{rival['evasion']}%")
-
     st.write("### 🧬 どの特性を奪って進化しますか？")
     
     # 選択肢の作成
@@ -171,11 +177,14 @@ elif st.session_state.phase == "boss":
     col1, col2 = st.columns(2)
     with col1:
         st.write("### 🧬 あなたの究極生物")
+        latest_appearance = st.session_state.player['appearances'][-1]
+        st.image(APPEARANCE_IMAGES.get(latest_appearance, "https://picsum.photos/seed/blob/200/200"), width=150)
         st.write(f"**見た目:** {', '.join(st.session_state.player['appearances'])}")
         st.write(f"**属性:** {', '.join(st.session_state.player['attributes'])}")
         st.json(st.session_state.player)
     with col2:
         st.write(f"### 👾 {boss['name']}")
+        st.image(boss["image"], width=150)
         st.json(boss)
 
     if st.button("ボスに戦いを挑む！", type="primary"):
