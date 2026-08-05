@@ -10,13 +10,13 @@ st.set_page_config(page_title="惑星進化シミュレーター", page_icon="�
 APPEARANCES = ["硬質外骨格", "発光器官", "翼膜", "触手", "結晶の棘"] # 6種
 ATTRIBUTES = ["炎熱", "極寒", "電撃", "猛毒", "光子", "暗黒"] # 6種
 
-# ライバルの画像パス生成関数 (36通り: 6見た目 × 6属性)
+# ライバルの画像パス生成関数 (30通り: 5見た目 × 6属性)
 def get_rival_image_path(appearance, attribute):
     # 例: ローカルの images/rivals/ フォルダに 'rival_硬質外骨格_炎熱.png' などの画像を置く想定
     # ※デモ用にプレースホルダーURLを返すことも可能
     return f"images/rivals/rival_{appearance}_{attribute}.png"
 
-# プレイヤーの画像パス生成関数 (225通り: 15見た目組み合わせ × 15属性組み合わせ)
+# プレイヤーの画像パス生成関数 (150通り: 10見た目組み合わせ × 15属性組み合わせ)
 def get_player_image_path(appearances, attributes):
     # 順序に依存しないようにソートして一意の文字列を作る
     app_sorted = "_".join(sorted(appearances))
