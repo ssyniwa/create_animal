@@ -198,7 +198,7 @@ elif st.session_state.phase == "boss":
             if b_hp <= 0:
                 break
                 
-_            # ボスの攻撃
+           # ボスの攻撃
             if random.randint(1, 100) > st.session_state.player["evasion"]:
                 dmg = max(5, boss["atk"] - st.session_state.player["def"] // 2)
                 p_hp -= dmg
