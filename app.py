@@ -6,22 +6,28 @@ st.set_page_config(page_title="惑星進化シミュレーター", page_icon="�
 
 # --- 定数データ（画像マッピングを追加） ---
 # 見た目に対応する画像パス（ローカルファイルまたはURL）
-APPEARANCE_IMAGES = {
-    "硬質外骨格": "https://picsum.photos/seed/exoskeleton/200/200",
-    "発光器官": "https://picsum.photos/seed/glowing/200/200",
-    "翼膜": "https://picsum.photos/seed/wings/200/200",
-    "触手": "https://picsum.photos/seed/tentacles/200/200",
-    "結晶の棘": "https://picsum.photos/seed/crystals/200/200",
-    "名もなき不定形": "https://picsum.photos/seed/blob/200/200"
-}
+# --- 定数データと画像マッピング用リスト ---
+APPEARANCES = ["硬質外骨格", "発光器官", "翼膜", "触手", "結晶の棘", "擬態スキン"] # 6種
+ATTRIBUTES = ["炎熱", "極寒", "電撃", "猛毒", "光子", "暗黒"] # 6種
+
+# ライバルの画像パス生成関数 (36通り: 6見た目 × 6属性)
+def get_rival_image_path(appearance, attribute):
+    # 例: ローカルの images/rivals/ フォルダに 'rival_硬質外骨格_炎熱.png' などの画像を置く想定
+    # ※デモ用にプレースホルダーURLを返すことも可能
+    return f"images/rivals/rival_{appearance}_{attribute}.png"
+
+# プレイヤーの画像パス生成関数 (225通り: 15見た目組み合わせ × 15属性組み合わせ)
+def get_player_image_path(appearances, attributes):
+    # 順序に依存しないようにソートして一意の文字列を作る
+    app_sorted = "_".join(sorted(appearances))
+    attr_sorted = "_".join(sorted(attributes))
+    # 例: images/players/player_硬質外骨格+触手_炎熱+極寒.png などの画像を置く想定
+    return f"images/players/player_{app_sorted}_{attr_sorted}.png"
 
 BOSS_LIST = [
-    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "https://picsum.photos/seed/gigadragon/300/300"},
-    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "image": "https://picsum.photos/seed/void/300/300"},
+    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "images/bosses/gigadrago.png"},
+    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "image": "images/bosses/void.png"},
 ]
-
-APPEARANCES = list(APPEARANCE_IMAGES.keys())[1:] # "名もなき不定形"を除外
-ATTRIBUTES = ["炎熱", "極寒", "電撃", "猛毒", "光子", "暗黒"]
 
 # --- セッション状態の初期化 ---
 if "phase" not in st.session_state:
@@ -52,16 +58,18 @@ def generate_planet():
 
 def generate_rival():
     app_name = random.choice(APPEARANCES)
+    attr_name = random.choice(ATTRIBUTES)
     st.session_state.current_rival = {
         "appearance": app_name,
-        "attribute": random.choice(ATTRIBUTES),
+        "attribute": attr_name,
         "hp": random.randint(50, 150),
         "atk": random.randint(15, 40),
         "def": random.randint(5, 25),
         "spd": random.randint(10, 30),
         "recovery": random.randint(2, 10),
         "evasion": random.randint(5, 20),
-        "image": APPEARANCE_IMAGES.get(app_name, "https://picsum.photos/seed/default/200/200")
+        # 36通りのライバル画像
+        "image": get_rival_image_path(app_name, attr_name)
     }
 
 def reset_game():
@@ -101,9 +109,12 @@ elif st.session_state.phase == "exploring":
 
     with col_player:
         st.markdown("### 🧪 あなたの生物")
-        # 現在持っている最後の見た目の画像を表示（複数ある場合は最新のものを代表表示）
-        latest_appearance = st.session_state.player['appearances'][-1]
-        player_img = APPEARANCE_IMAGES.get(latest_appearance, "https://picsum.photos/seed/blob/200/200")
+        # 225通りのプレイヤー画像を取得して表示
+        player_img = get_player_image_path(
+            st.session_state.player['appearances'], 
+            st.session_state.player['attributes']
+        )
+        # ※画像ファイルがまだ無い場合の代替としてエラーを防ぐため st.image を使う際は注意
         st.image(player_img, width=150, caption=f"見た目: {', '.join(st.session_state.player['appearances'])}")
         st.write(f"**属性:** {', '.join(st.session_state.player['attributes'])}")
         st.write(f"HP: {st.session_state.player['hp']} | ATK: {st.session_state.player['atk']} | DEF: {st.session_state.player['def']}")
@@ -177,8 +188,11 @@ elif st.session_state.phase == "boss":
     col1, col2 = st.columns(2)
     with col1:
         st.write("### 🧬 あなたの究極生物")
-        latest_appearance = st.session_state.player['appearances'][-1]
-        st.image(APPEARANCE_IMAGES.get(latest_appearance, "https://picsum.photos/seed/blob/200/200"), width=150)
+        player_img = get_player_image_path(
+            st.session_state.player['appearances'], 
+            st.session_state.player['attributes']
+        )
+        st.image(player_img, width=150)
         st.write(f"**見た目:** {', '.join(st.session_state.player['appearances'])}")
         st.write(f"**属性:** {', '.join(st.session_state.player['attributes'])}")
         st.json(st.session_state.player)
