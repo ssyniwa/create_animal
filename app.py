@@ -37,14 +37,14 @@ def get_player_image_path(appearances, attributes):
         attr_raw = "_".join(evolved_attrs)
         path_raw = f"images/player_{app_raw}_{attr_raw}.png"
         
-        if os.path.exists(path_raw):
+        elif os.path.exists(path_raw):
             return path_raw
             
         app_sorted2 = "_".join(evolved_apps)
         attr_sorted2 = "_".join(sorted(evolved_attrs))
         path_sorted2 = f"images/player_{app_sorted2}_{attr_sorted2}.png"
         
-        if os.path.exists(path_sorted2):
+        elif os.path.exists(path_sorted2):
             return path_sorted2
             
         # 2. 見つからない場合、ソートしていない（追加順の）パスをチェック
@@ -52,7 +52,7 @@ def get_player_image_path(appearances, attributes):
         attr_raw2 = "_".join(evolved_attrs)
         path_raw2 = f"images/player_{app_raw2}_{attr_raw2}.png"
         
-        if os.path.exists(path_raw2):
+        elif os.path.exists(path_raw2):
             return path_raw2   
     # 3. どちらも見つからない、または条件を満たさない場合はデフォルト
     return "images/player_defalt.png"
