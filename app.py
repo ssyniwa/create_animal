@@ -248,7 +248,7 @@ elif st.session_state.phase == "exploring":
     if st.button("この特性を吸収して進化する", type="primary"):
         action_type, detail = choices[selected_choice]
         p = st.session_state.player
-        
+        rival = st.session_state.current_rival
         # 進化処理
         if action_type == "appearance":
             if "名もなき不定形" in p["appearances"]:
@@ -278,7 +278,13 @@ elif st.session_state.phase == "exploring":
                 p["recovery"] += rival["recovery"]
             elif detail == "evasion":
                 p["evasion"] = min(80, p["evasion"] + rival["evasion"])
-
+        # --- 2. 【追加】ライバルステータスの20%分を自動加算 ---
+        p["hp"] += int(rival["hp"] * 0.2)
+        p["atk"] += int(rival["atk"] * 0.2)
+        p["def"] += int(rival["def"] * 0.2)
+        p["spd"] += int(rival["spd"] * 0.2)
+        p["recovery"] += int(rival["recovery"] * 0.2)
+        p["evasion"] = min(80, p["evasion"] + int(rival["evasion"] * 0.2))
         # 次のサイクルへ、またはボスへ
         if st.session_state.cycle >= 10:
             st.session_state.phase = "boss"
