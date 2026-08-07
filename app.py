@@ -3,7 +3,7 @@ import streamlit as st
 import os
 import itertools
 # ページの基本設定
-st.set_page_config(page_title="惑星進化シミュレーター", page_icon="🧬", layout="centered")
+st.set_page_config(page_title="生物進化シミュレーター", page_icon="🧬", layout="centered")
 
 # --- 定数データ（画像マッピングを追加） ---
 # 見た目に対応する画像パス（ローカルファイルまたはURL）
