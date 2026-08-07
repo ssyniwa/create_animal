@@ -67,6 +67,7 @@ if "phase" not in st.session_state:
 if "cycle" not in st.session_state:
     st.session_state.cycle = 1
 # プレイヤーのステータス
+# プレイヤーのステータス初期化の部分に追加
 if "player" not in st.session_state:
     st.session_state.player = {
         "appearances": ["名もなき不定形"],
@@ -78,6 +79,10 @@ if "player" not in st.session_state:
         "recovery": 5,
         "evasion": 10,
     }
+
+# 【追加】すでに選択したステータスを記録するリスト
+if "chosen_stats" not in st.session_state:
+    st.session_state.chosen_stats = []
 if "current_rival" not in st.session_state:
     st.session_state.current_rival = None
 if "planet_env" not in st.session_state:
@@ -161,62 +166,70 @@ elif st.session_state.phase == "exploring":
     st.markdown("---")
     st.write("### 🧬 どの特性を奪って進化しますか？")
     
-    # --- 修正部分：選択肢の作成 ---
+    # --- 選択肢の作成 ---
     choices = {}
     
-    # 「名もなき不定形」以外の獲得した見た目が2つ未満の場合に選択可能にする
+    # 見た目（上限2つ）
     evolved_apps = [a for a in st.session_state.player["appearances"] if a != "名もなき不定形"]
     if len(evolved_apps) < 2:
-        choices[f"見た目を奪う: {rival['appearance']}"] = "appearance"
+        choices[f"見た目を奪う: {rival['appearance']}"] = ("appearance", None)
         
-    # 「無属性」以外の獲得した属性が2つ未満の場合に選択可能にする
+    # 属性（上限2つ）
     evolved_attrs = [a for a in st.session_state.player["attributes"] if a != "無属性"]
     if len(evolved_attrs) < 2:
-        choices[f"属性を奪う: {rival['attribute']}"] = "attribute"
+        choices[f"属性を奪う: {rival['attribute']}"] = ("attribute", None)
     
-    choices.update({
-        f"HPを強化 (+{rival['hp']}の半分)": "hp",
-        f"攻撃力を強化 (+{rival['atk']}の半分)": "atk",
-        f"防御力を強化 (+{rival['def']}の半分)": "def",
-        f"スピードを強化 (+{rival['spd']}の半分)": "spd",
-        f"回復力を強化 (+{rival['recovery']})": "recovery",
-        f"回避率を強化 (+5%)": "evasion",
-    })
+    # 各ステータス（未選択のものだけ追加）
+    stat_options = {
+        "hp": f"HPを強化 (+{rival['hp']}の半分)",
+        "atk": f"攻撃力を強化 (+{rival['atk']}の半分)",
+        "def": f"防御力を強化 (+{rival['def']}の半分)",
+        "spd": f"スピードを強化 (+{rival['spd']}の半分)",
+        "recovery": f"回復力を強化 (+{rival['recovery']})",
+        "evasion": f"回避率を強化 (+5%)"
+    }
+
+    for stat_key, label in stat_options.items():
+        if stat_key not in st.session_state.chosen_stats:
+            choices[label] = ("stat", stat_key)
 
     selected_choice = st.selectbox("進化先を選択", list(choices.keys()))
 
     if st.button("この特性を吸収して進化する", type="primary"):
-        action = choices[selected_choice]
+        action_type, detail = choices[selected_choice]
         p = st.session_state.player
         
         # 進化処理
-        if action == "appearance":
+        if action_type == "appearance":
             if "名もなき不定形" in p["appearances"]:
-                # 最初の進化：初期値を消して、新しい見た目を入れる
                 p["appearances"] = [rival["appearance"]]
             else:
-                # 2回目の進化：今のリストに新しい見た目を追加する
                 if rival["appearance"] not in p["appearances"]:
                     p["appearances"].append(rival["appearance"])
                 
-        elif action == "attribute":
+        elif action_type == "attribute":
             if "無属性" in p["attributes"]:
                 p["attributes"] = [rival["attribute"]]
             else:
                 if rival["attribute"] not in p["attributes"]:
                     p["attributes"].append(rival["attribute"])
-        elif action == "hp":
-            p["hp"] += rival["hp"] // 2
-        elif action == "atk":
-            p["atk"] += rival["atk"] // 2
-        elif action == "def":
-            p["def"] += rival["def"] // 2
-        elif action == "spd":
-            p["spd"] += rival["spd"] // 2
-        elif action == "recovery":
-            p["recovery"] += rival["recovery"]
-        elif action == "evasion":
-            p["evasion"] = min(80, p["evasion"] + 5)
+                
+        elif action_type == "stat":
+            # 選んだステータスを記録（2度と選べなくする）
+            st.session_state.chosen_stats.append(detail)
+            
+            if detail == "hp":
+                p["hp"] += rival["hp"] // 2
+            elif detail == "atk":
+                p["atk"] += rival["atk"] // 2
+            elif detail == "def":
+                p["def"] += rival["def"] // 2
+            elif detail == "spd":
+                p["spd"] += rival["spd"] // 2
+            elif detail == "recovery":
+                p["recovery"] += rival["recovery"]
+            elif detail == "evasion":
+                p["evasion"] = min(80, p["evasion"] + 5)
 
         # 次のサイクルへ、またはボスへ
         if st.session_state.cycle >= 10:
@@ -247,7 +260,7 @@ elif st.session_state.phase == "boss":
         st.json(st.session_state.player)
     with col2:
         st.write(f"### 👾 {boss['name']}")
-        st.image(boss["image"], width=150)
+        st.image(boss["image"], width=300)
         st.json(boss)
 
     if st.button("ボスに戦いを挑む！", type="primary"):
