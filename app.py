@@ -16,28 +16,26 @@ def get_rival_image_path(appearance, attribute):
     # ※デモ用にプレースホルダーURLを返すことも可能
     return f"images/rival_{appearance}_{attribute}.png"
 
-# プレイヤーの画像パス生成関数
 def get_player_image_path(appearances, attributes):
-    # 見た目が2つ、属性が2つ揃っているか判定
-    # ※初期状態の「名もなき不定形」「無属性」を除外してカウントするため、
-    # 実際には進化でリストに追加された後の長さをチェックします。
+    # 初期値を除外したリストを作成
+    evolved_apps = [a for a in appearances if a != "名もなき不定形"]
+    evolved_attrs = [a for a in attributes if a != "無属性"]
     
-    # リストに「名もなき不定形」や「無属性」が含まれている間はデフォルトを表示
-    has_evolved_appearances = len([a for a in appearances if a != "名もなき不定形"]) >= 2
-    has_evolved_attributes = len([a for a in attributes if a != "無属性"]) >= 2
-    
-    if has_evolved_appearances and has_evolved_attributes:
-        # 進化完了している場合、正規の画像パスを生成
-        app_sorted = "_".join(sorted([a for a in appearances if a != "名もなき不定形"]))
-        attr_sorted = "_".join(sorted([a for a in attributes if a != "無属性"]))
+    # 2つずつ揃っている場合のみ画像を探す
+    if len(evolved_apps) == 2 and len(evolved_attrs) == 2:
+        # ソートしてアンダースコアで連結
+        app_str = "_".join(sorted(evolved_apps))
+        attr_str = "_".join(sorted(evolved_attrs))
         
-        path = f"images/player_{app_sorted}_{attr_sorted}.png"
+        path = f"images/player_{app_str}_{attr_str}.png"
         
-        # ファイルが存在するか確認（存在しない場合はデフォルトを表示）
+        # 開発中：パスが正しいか確認したい場合、一時的にコメントアウトを外す
+        # st.sidebar.write(f"期待されるパス: {path}") 
+        
         if os.path.exists(path):
             return path
             
-    # 条件を満たさない、またはファイルがない場合はデフォルト
+    # それ以外はデフォルト
     return "images/player_defalt.png"
 
 BOSS_LIST = [
@@ -175,19 +173,20 @@ elif st.session_state.phase == "exploring":
         
         # 進化処理
         if action == "appearance":
-            # 初期の「名もなき不定形」が残っていれば上書き、2つ目以降なら追加
             if "名もなき不定形" in p["appearances"]:
+                # 最初の進化：初期値を消して、新しい見た目を入れる
                 p["appearances"] = [rival["appearance"]]
             else:
-                p["appearances"].append(rival["appearance"])
+                # 2回目の進化：今のリストに新しい見た目を追加する
+                if rival["appearance"] not in p["appearances"]:
+                    p["appearances"].append(rival["appearance"])
                 
         elif action == "attribute":
-            # 初期の「無属性」が残っていれば上書き、2つ目以降なら追加
             if "無属性" in p["attributes"]:
                 p["attributes"] = [rival["attribute"]]
             else:
-                p["attributes"].append(rival["attribute"])
-                
+                if rival["attribute"] not in p["attributes"]:
+                    p["attributes"].append(rival["attribute"])
         elif action == "hp":
             p["hp"] += rival["hp"] // 2
         elif action == "atk":
