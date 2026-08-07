@@ -243,7 +243,20 @@ elif st.session_state.phase == "exploring":
             else:
                 if rival["attribute"] not in p["attributes"]:
                     p["attributes"].append(rival["attribute"])
-                
+            # 【追加】属性に応じたライバルステータス10%の加算
+            attr = rival["attribute"]
+            if attr == "炎熱":
+                p["atk"] += int(rival["atk"] * 0.1)
+            elif attr == "極寒":
+                p["def"] += int(rival["def"] * 0.1)
+            elif attr == "電撃":
+                p["spd"] += int(rival["spd"] * 0.1)
+            elif attr == "猛毒":
+                p["hp"] += int(rival["hp"] * 0.1)
+            elif attr == "光子":
+                p["recovery"] += int(rival["recovery"] * 0.1)
+            elif attr == "暗黒":
+                p["evasion"] = min(80, p["evasion"] + int(rival["evasion"] * 0.1))    
         elif action_type == "stat":
             # 選んだステータスを記録（2度と選べなくする）
             st.session_state.chosen_stats.append(detail)
