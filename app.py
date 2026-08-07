@@ -354,10 +354,25 @@ elif st.session_state.phase == "boss":
 # --- UI: リザルト画面 ---
 elif st.session_state.phase == "result":
     st.subheader("🏆 戦闘結果")
+    
     if st.session_state.battle_won:
         st.success("🎉 おめでとうございます！ボスを撃破し、この宇宙の真の支配者となりました！")
+        
+        # 勝利時：プレイヤー生物の画像と称号を表示
+        st.markdown("### 👑 最強生物の称号：宇宙の覇者")
+        player_img = get_player_image_path(
+            st.session_state.player['appearances'], 
+            st.session_state.player['attributes']
+        )
+        st.image(player_img, width=350, caption="究極進化を遂げたプレイヤー生物")
+        
     else:
         st.error("💀 敗北しました… 究極生物の進化が足りなかったようです。")
+        
+        # 敗北時：ボス敵の画像を表示
+        boss = st.session_state.boss
+        st.markdown(f"### 👾 打ち破れなかった壁：{boss['name']}")
+        st.image(boss["image"], width=350, caption=boss["name"])
 
     with st.expander("📜 戦闘ログの詳細"):
         for line in st.session_state.get("battle_log", []):
