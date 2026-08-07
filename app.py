@@ -175,9 +175,19 @@ elif st.session_state.phase == "exploring":
         
         # 進化処理
         if action == "appearance":
-            p["appearances"].append(rival["appearance"])
+            # 初期の「名もなき不定形」が残っていれば上書き、2つ目以降なら追加
+            if "名もなき不定形" in p["appearances"]:
+                p["appearances"] = [rival["appearance"]]
+            else:
+                p["appearances"].append(rival["appearance"])
+                
         elif action == "attribute":
-            p["attributes"].append(rival["attribute"])
+            # 初期の「無属性」が残っていれば上書き、2つ目以降なら追加
+            if "無属性" in p["attributes"]:
+                p["attributes"] = [rival["attribute"]]
+            else:
+                p["attributes"].append(rival["attribute"])
+                
         elif action == "hp":
             p["hp"] += rival["hp"] // 2
         elif action == "atk":
