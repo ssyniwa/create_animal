@@ -21,23 +21,41 @@ def get_player_image_path(appearances, attributes):
     evolved_apps = [a for a in appearances if a != "名もなき不定形"]
     evolved_attrs = [a for a in attributes if a != "無属性"]
     
-    # 2つずつ揃っている場合のみ画像を探す
+    # 見た目が2つ、属性が2つ揃っている場合
     if len(evolved_apps) == 2 and len(evolved_attrs) == 2:
-        # ソートしてアンダースコアで連結
-        app_str = "_".join(sorted(evolved_apps))
-        attr_str = "_".join(sorted(evolved_attrs))
         
-        path = f"images/player_{app_str}_{attr_str}.png"
+        # 1. ソートしたパスをチェック
+        app_sorted = "_".join(sorted(evolved_apps))
+        attr_sorted = "_".join(sorted(evolved_attrs))
+        path_sorted = f"images/player_{app_sorted}_{attr_sorted}.png"
         
-        # 開発中：パスが正しいか確認したい場合、一時的にコメントアウトを外す
-        # st.sidebar.write(f"期待されるパス: {path}") 
-        
-        if os.path.exists(path):
-            return path
+        if os.path.exists(path_sorted):
+            return path_sorted
             
-    # それ以外はデフォルト
+        # 2. 見つからない場合、ソートしていない（追加順の）パスをチェック
+        app_raw = "_".join(evolved_apps)
+        attr_raw = "_".join(evolved_attrs)
+        path_raw = f"images/player_{app_raw}_{attr_raw}.png"
+        
+        if os.path.exists(path_raw):
+            return path_raw
+            
+        app_sorted2 = "_".join(evolved_apps)
+        attr_sorted2 = "_".join(sorted(evolved_attrs))
+        path_sorted2 = f"images/player_{app_sorted2}_{attr_sorted2}.png"
+        
+        if os.path.exists(path_sorted2):
+            return path_sorted2
+            
+        # 2. 見つからない場合、ソートしていない（追加順の）パスをチェック
+        app_raw2 = "_".join(sorted(evolved_apps))
+        attr_raw2 = "_".join(evolved_attrs)
+        path_raw2 = f"images/player_{app_raw2}_{attr_raw2}.png"
+        
+        if os.path.exists(path_raw2):
+            return path_raw2   
+    # 3. どちらも見つからない、または条件を満たさない場合はデフォルト
     return "images/player_defalt.png"
-
 BOSS_LIST = [
     {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "images/gigadrago.png"},
     {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "image": "images/void.png"},
