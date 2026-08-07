@@ -279,12 +279,12 @@ elif st.session_state.phase == "exploring":
             elif detail == "evasion":
                 p["evasion"] = min(80, p["evasion"] + rival["evasion"])
         # --- 2. 【追加】ライバルステータスの20%分を自動加算 ---
-        p["hp"] += int(rival["hp"] * 0.2)
-        p["atk"] += int(rival["atk"] * 0.2)
-        p["def"] += int(rival["def"] * 0.2)
-        p["spd"] += int(rival["spd"] * 0.2)
-        p["recovery"] += int(rival["recovery"] * 0.2)
-        p["evasion"] = min(80, p["evasion"] + int(rival["evasion"] * 0.2))
+        p["hp"] += int(rival["hp"] * 0.1)
+        p["atk"] += int(rival["atk"] * 0.1)
+        p["def"] += int(rival["def"] * 0.1)
+        p["spd"] += int(rival["spd"] * 0.1)
+        p["recovery"] += int(rival["recovery"] * 0.1)
+        p["evasion"] = min(80, p["evasion"] + int(rival["evasion"] * 0.1))
         # 次のサイクルへ、またはボスへ
         if st.session_state.cycle >= 10:
             st.session_state.phase = "boss"
