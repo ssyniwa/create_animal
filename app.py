@@ -248,7 +248,7 @@ elif st.session_state.phase == "exploring":
     if st.button("この特性を吸収して進化する", type="primary"):
         action_type, detail = choices[selected_choice]
         p = st.session_state.player
-        rival = st.session_state.current_rival
+        
         # 進化処理
         if action_type == "appearance":
             if "名もなき不定形" in p["appearances"]:
