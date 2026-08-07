@@ -37,8 +37,8 @@ def get_player_image_path(appearances, attributes):
     # どの組み合わせも見つからない、または条件を満たさない場合はデフォルト
     return "images/player_defalt.png"
 BOSS_LIST = [
-    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "images/gigadrago.png"},
-    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "image": "images/void.png"},
+    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40,"recovery": 10, "evasion": 15, "image": "images/gigadrago.png"},
+    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "recovery": 15, "evasion": 20,"image": "images/void.png"},
 ]
 
 # --- セッション状態の初期化 ---
@@ -317,6 +317,7 @@ elif st.session_state.phase == "boss":
         p_hp = st.session_state.player["hp"]
         p_max_hp = p_hp
         b_hp = boss["hp"]
+        b_max_hp = b_hp  # ボスの最大HP（回復の上限用）
         
         log = []
         turn = 1
@@ -340,15 +341,16 @@ elif st.session_state.phase == "boss":
             else:
                 log.append(f"ターン{turn}: ボスの攻撃！ しかしあなたは華麗に回避した！")
             
-            # ターン終了時回復
+            # ターン終了時回復（プレイヤーとボス）
             p_hp = min(p_max_hp, p_hp + st.session_state.player["recovery"])
+            b_hp = min(b_max_hp, b_hp + boss.get("recovery", 0))
+            
             turn += 1
 
         st.session_state.battle_log = log
         st.session_state.battle_won = b_hp <= 0
         st.session_state.phase = "result"
         st.rerun()
-
 # --- UI: リザルト画面 ---
 elif st.session_state.phase == "result":
     st.subheader("🏆 戦闘結果")
