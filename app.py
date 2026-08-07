@@ -277,7 +277,7 @@ elif st.session_state.phase == "exploring":
             elif detail == "recovery":
                 p["recovery"] += rival["recovery"]
             elif detail == "evasion":
-                p["evasion"] = min(80, p["evasion"] + prival["evasion"])
+                p["evasion"] = min(80, p["evasion"] + rival["evasion"])
 
         # 次のサイクルへ、またはボスへ
         if st.session_state.cycle >= 10:
