@@ -96,16 +96,66 @@ def generate_planet():
 def generate_rival():
     app_name = random.choice(APPEARANCES)
     attr_name = random.choice(ATTRIBUTES)
+    
+    # 見た目ごとの基本ステータス（ベース値）を設定
+    # 外骨格：HPと防御力高め、スピード低め
+    if app_name == "外骨格":
+        hp = random.randint(100, 180)
+        atk = random.randint(15, 35)
+        def_val = random.randint(20, 40)
+        spd = random.randint(5, 15)
+        recovery = random.randint(2, 6)
+        evasion = random.randint(5, 15)
+        
+    # 発光器官：回避率高め、攻撃力低め
+    elif app_name == "発光器官":
+        hp = random.randint(50, 100)
+        atk = random.randint(10, 25)
+        def_val = random.randint(5, 15)
+        spd = random.randint(15, 30)
+        recovery = random.randint(2, 8)
+        evasion = random.randint(25, 45)
+        
+    # 翼膜：スピード高め、防御力低め
+    elif app_name == "翼膜":
+        hp = random.randint(60, 110)
+        atk = random.randint(20, 40)
+        def_val = random.randint(2, 10)
+        spd = random.randint(30, 50)
+        recovery = random.randint(2, 8)
+        evasion = random.randint(15, 30)
+        
+    # 触手：回復力高め、回避率低め
+    elif app_name == "触手":
+        hp = random.randint(80, 130)
+        atk = random.randint(15, 35)
+        def_val = random.randint(10, 25)
+        spd = random.randint(15, 25)
+        recovery = random.randint(12, 25)
+        evasion = random.randint(2, 10)
+        
+    # 機械生命体：攻撃力高め、回復力低め
+    elif app_name == "機械生命体":
+        hp = random.randint(90, 140)
+        atk = random.randint(35, 60)
+        def_val = random.randint(15, 30)
+        spd = random.randint(15, 30)
+        recovery = random.randint(0, 3)
+        evasion = random.randint(5, 15)
+        
+    else:
+        # フォールバック（念のため）
+        hp, atk, def_val, spd, recovery, evasion = 100, 20, 10, 15, 5, 10
+
     st.session_state.current_rival = {
         "appearance": app_name,
         "attribute": attr_name,
-        "hp": random.randint(50, 150),
-        "atk": random.randint(15, 40),
-        "def": random.randint(5, 25),
-        "spd": random.randint(10, 30),
-        "recovery": random.randint(2, 10),
-        "evasion": random.randint(5, 20),
-        # 36通りのライバル画像
+        "hp": hp,
+        "atk": atk,
+        "def": def_val,
+        "spd": spd,
+        "recovery": recovery,
+        "evasion": evasion,
         "image": get_rival_image_path(app_name, attr_name)
     }
 
