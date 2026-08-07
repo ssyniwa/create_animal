@@ -131,14 +131,14 @@ elif st.session_state.phase == "exploring":
             st.session_state.player['attributes']
         )
         # ※画像ファイルがまだ無い場合の代替としてエラーを防ぐため st.image を使う際は注意
-        st.image(player_img, width=150, caption=f"見た目: {', '.join(st.session_state.player['appearances'])}")
+        st.image(player_img, width=300, caption=f"見た目: {', '.join(st.session_state.player['appearances'])}")
         st.write(f"**属性:** {', '.join(st.session_state.player['attributes'])}")
         st.write(f"HP: {st.session_state.player['hp']} | ATK: {st.session_state.player['atk']} | DEF: {st.session_state.player['def']}")
 
     with col_rival:
         st.markdown("### 👾 惑星の支配的生物")
         rival = st.session_state.current_rival
-        st.image(rival["image"], width=150, caption=f"見た目: {rival['appearance']}")
+        st.image(rival["image"], width=300, caption=f"見た目: {rival['appearance']}")
         st.write(f"**属性:** {rival['attribute']}")
         st.write(f"HP: {rival['hp']} | ATK: {rival['atk']} | DEF: {rival['def']}")
 
@@ -208,7 +208,7 @@ elif st.session_state.phase == "boss":
             st.session_state.player['appearances'], 
             st.session_state.player['attributes']
         )
-        st.image(player_img, width=150)
+        st.image(player_img, width=300)
         st.write(f"**見た目:** {', '.join(st.session_state.player['appearances'])}")
         st.write(f"**属性:** {', '.join(st.session_state.player['attributes'])}")
         st.json(st.session_state.player)
