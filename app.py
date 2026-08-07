@@ -1,6 +1,6 @@
 import random
 import streamlit as st
-
+import os
 # ページの基本設定
 st.set_page_config(page_title="惑星進化シミュレーター", page_icon="🧬", layout="centered")
 
@@ -14,19 +14,35 @@ ATTRIBUTES = ["炎熱", "極寒", "電撃", "猛毒", "光子", "暗黒"] # 6種
 def get_rival_image_path(appearance, attribute):
     # 例: ローカルの images/rivals/ フォルダに 'rival_硬質外骨格_炎熱.png' などの画像を置く想定
     # ※デモ用にプレースホルダーURLを返すことも可能
-    return f"images/rivals/rival_{appearance}_{attribute}.png"
+    return f"images/rival_{appearance}_{attribute}.png"
 
-# プレイヤーの画像パス生成関数 (150通り: 10見た目組み合わせ × 15属性組み合わせ)
+# プレイヤーの画像パス生成関数
 def get_player_image_path(appearances, attributes):
-    # 順序に依存しないようにソートして一意の文字列を作る
-    app_sorted = "_".join(sorted(appearances))
-    attr_sorted = "_".join(sorted(attributes))
-    # 例: images/players/player_硬質外骨格+触手_炎熱+極寒.png などの画像を置く想定
-    return f"images/players/player_{app_sorted}_{attr_sorted}.png"
+    # 見た目が2つ、属性が2つ揃っているか判定
+    # ※初期状態の「名もなき不定形」「無属性」を除外してカウントするため、
+    # 実際には進化でリストに追加された後の長さをチェックします。
+    
+    # リストに「名もなき不定形」や「無属性」が含まれている間はデフォルトを表示
+    has_evolved_appearances = len([a for a in appearances if a != "名もなき不定形"]) >= 2
+    has_evolved_attributes = len([a for a in attributes if a != "無属性"]) >= 2
+    
+    if has_evolved_appearances and has_evolved_attributes:
+        # 進化完了している場合、正規の画像パスを生成
+        app_sorted = "_".join(sorted([a for a in appearances if a != "名もなき不定形"]))
+        attr_sorted = "_".join(sorted([a for a in attributes if a != "無属性"]))
+        
+        path = f"images/player_{app_sorted}_{attr_sorted}.png"
+        
+        # ファイルが存在するか確認（存在しない場合はデフォルトを表示）
+        if os.path.exists(path):
+            return path
+            
+    # 条件を満たさない、またはファイルがない場合はデフォルト
+    return "images/player_defalt.png"
 
 BOSS_LIST = [
-    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "images/bosses/gigadrago.png"},
-    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "image": "images/bosses/void.png"},
+    {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "images/gigadrago.png"},
+    {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "image": "images/void.png"},
 ]
 
 # --- セッション状態の初期化 ---
