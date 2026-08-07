@@ -249,18 +249,20 @@ elif st.session_state.phase == "exploring":
         action_type, detail = choices[selected_choice]
         p = st.session_state.player
         
-        # 進化処理
+        # --- 1. 選択した特性の吸収処理 ---
         if action_type == "appearance":
             if "名もなき不定形" in p["appearances"]:
                 p["appearances"] = [rival["appearance"]]
             else:
-                p["appearances"].append(rival["appearance"])
+                if rival["appearance"] not in p["appearances"]:
+                    p["appearances"].append(rival["appearance"])
                 
         elif action_type == "attribute":
             if "無属性" in p["attributes"]:
                 p["attributes"] = [rival["attribute"]]
             else:
-                p["attributes"].append(rival["attribute"])
+                if rival["attribute"] not in p["attributes"]:
+                    p["attributes"].append(rival["attribute"])
                 
         elif action_type == "stat":
             # 選んだステータスを記録（2度と選べなくする）
