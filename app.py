@@ -145,11 +145,17 @@ elif st.session_state.phase == "exploring":
     st.markdown("---")
     st.write("### 🧬 どの特性を奪って進化しますか？")
     
-    # 選択肢の作成
+    # --- 修正部分：選択肢の作成 ---
     choices = {}
-    if len(st.session_state.player["appearances"]) < 2:
+    
+    # 「名もなき不定形」以外の獲得した見た目が2つ未満の場合に選択可能にする
+    evolved_apps = [a for a in st.session_state.player["appearances"] if a != "名もなき不定形"]
+    if len(evolved_apps) < 2:
         choices[f"見た目を奪う: {rival['appearance']}"] = "appearance"
-    if len(st.session_state.player["attributes"]) < 2:
+        
+    # 「無属性」以外の獲得した属性が2つ未満の場合に選択可能にする
+    evolved_attrs = [a for a in st.session_state.player["attributes"] if a != "無属性"]
+    if len(evolved_attrs) < 2:
         choices[f"属性を奪う: {rival['attribute']}"] = "attribute"
     
     choices.update({
