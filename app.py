@@ -236,7 +236,7 @@ elif st.session_state.phase == "exploring":
         "def": f"防御力を強化 (+{rival['def']})",
         "spd": f"スピードを強化 (+{rival['spd']})",
         "recovery": f"回復力を強化 (+{rival['recovery']})",
-        "evasion": f"回避率を強化 (+5%)"
+        "evasion": f"回避率を強化 (+{rival['evasion']})"
     }
 
     for stat_key, label in stat_options.items():
@@ -277,7 +277,7 @@ elif st.session_state.phase == "exploring":
             elif detail == "recovery":
                 p["recovery"] += rival["recovery"]
             elif detail == "evasion":
-                p["evasion"] = min(80, p["evasion"] + 5)
+                p["evasion"] = min(80, p["evasion"] + prival["evasion"])
 
         # 次のサイクルへ、またはボスへ
         if st.session_state.cycle >= 10:
