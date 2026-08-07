@@ -181,10 +181,10 @@ elif st.session_state.phase == "exploring":
     
     # 各ステータス（未選択のものだけ追加）
     stat_options = {
-        "hp": f"HPを強化 (+{rival['hp']}の半分)",
-        "atk": f"攻撃力を強化 (+{rival['atk']}の半分)",
-        "def": f"防御力を強化 (+{rival['def']}の半分)",
-        "spd": f"スピードを強化 (+{rival['spd']}の半分)",
+        "hp": f"HPを強化 (+{rival['hp']})",
+        "atk": f"攻撃力を強化 (+{rival['atk']})",
+        "def": f"防御力を強化 (+{rival['def']})",
+        "spd": f"スピードを強化 (+{rival['spd']})",
         "recovery": f"回復力を強化 (+{rival['recovery']})",
         "evasion": f"回避率を強化 (+5%)"
     }
@@ -217,13 +217,13 @@ elif st.session_state.phase == "exploring":
             st.session_state.chosen_stats.append(detail)
             
             if detail == "hp":
-                p["hp"] += rival["hp"] // 2
+                p["hp"] += rival["hp"] 
             elif detail == "atk":
-                p["atk"] += rival["atk"] // 2
+                p["atk"] += rival["atk"]
             elif detail == "def":
-                p["def"] += rival["def"] // 2
+                p["def"] += rival["def"]
             elif detail == "spd":
-                p["spd"] += rival["spd"] // 2
+                p["spd"] += rival["spd"]
             elif detail == "recovery":
                 p["recovery"] += rival["recovery"]
             elif detail == "evasion":
