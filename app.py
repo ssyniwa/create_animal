@@ -1,6 +1,7 @@
 import random
 import streamlit as st
 import os
+import itertools
 # ページの基本設定
 st.set_page_config(page_title="惑星進化シミュレーター", page_icon="🧬", layout="centered")
 
@@ -23,38 +24,17 @@ def get_player_image_path(appearances, attributes):
     
     # 見た目が2つ、属性が2つ揃っている場合
     if len(evolved_apps) == 2 and len(evolved_attrs) == 2:
-        
-        # 1. ソートしたパスをチェック
-        app_sorted = "_".join(sorted(evolved_apps))
-        attr_sorted = "_".join(sorted(evolved_attrs))
-        path_sorted = f"images/player_{app_sorted}_{attr_sorted}.png"
-        
-        if os.path.exists(path_sorted):
-            return path_sorted
-            
-        # 2. 見つからない場合、ソートしていない（追加順の）パスをチェック
-        app_raw = "_".join(evolved_apps)
-        attr_raw = "_".join(evolved_attrs)
-        path_raw = f"images/player_{app_raw}_{attr_raw}.png"
-        
-        if os.path.exists(path_raw):
-            return path_raw
-            
-        app_sorted2 = "_".join(evolved_apps)
-        attr_sorted2 = "_".join(sorted(evolved_attrs))
-        path_sorted2 = f"images/player_{app_sorted2}_{attr_sorted2}.png"
-        
-        if os.path.exists(path_sorted2):
-            return path_sorted2
-            
-        # 2. 見つからない場合、ソートしていない（追加順の）パスをチェック
-        app_raw2 = "_".join(sorted(evolved_apps))
-        attr_raw2 = "_".join(evolved_attrs)
-        path_raw2 = f"images/player_{app_raw2}_{attr_raw2}.png"
-        
-        if os.path.exists(path_raw2):
-            return path_raw2   
-    # 3. どちらも見つからない、または条件を満たさない場合はデフォルト
+        # 見た目と属性のそれぞれの並び順を入れ替えたすべての組み合わせを総当たりでチェック
+        for app_comb in itertools.permutations(evolved_apps):
+            for attr_comb in itertools.permutations(evolved_attrs):
+                app_str = "_".join(app_comb)
+                attr_str = "_".join(attr_comb)
+                path = f"images/player_{app_str}_{attr_str}.png"
+                
+                if os.path.exists(path):
+                    return path
+                    
+    # どの組み合わせも見つからない、または条件を満たさない場合はデフォルト
     return "images/player_defalt.png"
 BOSS_LIST = [
     {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "image": "images/gigadrago.png"},
