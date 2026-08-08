@@ -324,7 +324,7 @@ elif st.session_state.phase == "boss":
         
         log = []
         turn = 1
-        while p_hp > 0 and b_hp > 0 and turn <= 40:
+        while p_hp > 0 and b_hp > 0 and turn <= 100:
             # プレイヤーの攻撃
             if random.randint(1, 100) > boss.get("evasion", 10):
                 dmg = max(5, st.session_state.player["atk"] - boss["def"] // 2)
