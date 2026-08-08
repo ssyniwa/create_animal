@@ -187,14 +187,14 @@ elif st.session_state.phase == "exploring":
         # ※画像ファイルがまだ無い場合の代替としてエラーを防ぐため st.image を使う際は注意
         st.image(player_img, width=300, caption=f"見た目: {', '.join(st.session_state.player['appearances'])}")
         st.write(f"**属性:** {', '.join(st.session_state.player['attributes'])}")
-        st.write(f"HP: {st.session_state.player['hp']} | ATK: {st.session_state.player['atk']} | DEF: {st.session_state.player['def']}")
+        st.write(f"HP: {st.session_state.player['hp']} | ATK: {st.session_state.player['atk']} | DEF: {st.session_state.player['def']} | SPD: {st.session_state.player['spd']} | 回復: {st.session_state.player['recovery']} | 回避: {st.session_state.player['evasion']}")
 
     with col_rival:
         st.markdown("### 👾 惑星の支配的生物")
         rival = st.session_state.current_rival
         st.image(rival["image"], width=300, caption=f"見た目: {rival['appearance']}")
         st.write(f"**属性:** {rival['attribute']}")
-        st.write(f"HP: {rival['hp']} | ATK: {rival['atk']} | DEF: {rival['def']}")
+        st.write(f"HP: {rival['hp']} | ATK: {rival['atk']} | DEF: {rival['def']} | SPD: {rival['spd']} | 回復: {rival['recovery']} | 回避: {rival['evasion']}")
 
     st.markdown("---")
     st.write("### 🧬 どの特性を奪って進化しますか？")
