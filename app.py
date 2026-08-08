@@ -39,8 +39,8 @@ def get_player_image_path(appearances, attributes):
 BOSS_LIST = [
     {"name": "星間破壊獣ギガドラゴ", "hp": 500, "atk": 80, "def": 50, "spd": 40, "recovery": 10, "evasion": 15, "image": "images/gigadrago.png"},
     {"name": "次元侵略者ヴォイド", "hp": 600, "atk": 70, "def": 70, "spd": 50, "recovery": 15, "evasion": 20, "image": "images/void.png"},
-    {"name": "創世神話獣オメガ", "hp": 670, "atk": 75, "def": 60, "spd": 45, "recovery": 20, "evasion": 25, "image": "images/omega.png"},
-    {"name": "磁気嵐要塞マグネトロン", "hp": 720, "atk": 65, "def": 85, "spd": 20, "recovery": 5, "evasion": 5, "image": "images/magnetron.png"},
+    {"name": "創世神話獣オメガ", "hp": 700, "atk": 75, "def": 60, "spd": 45, "recovery": 20, "evasion": 25, "image": "images/omega.png"},
+    {"name": "磁気嵐要塞マグネトロン", "hp": 850, "atk": 65, "def": 85, "spd": 20, "recovery": 5, "evasion": 5, "image": "images/magnetron.png"},
     {"name": "虚無魔王アビス", "hp": 600, "atk": 95, "def": 40, "spd": 60, "recovery": 10, "evasion": 20, "image": "images/abyss.png"},
 ]
 
