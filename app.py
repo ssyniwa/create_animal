@@ -156,7 +156,7 @@ def reset_game():
         "evasion": 10,
     }
     st.session_state.current_rival = None
-
+    st.session_state.chosen_stats = []
 # --- UI: スタート画面 ---
 if st.session_state.phase == "start":
     st.title("🧬 惑星進化侵略シミュレーター")
